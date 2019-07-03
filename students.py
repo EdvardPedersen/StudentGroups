@@ -1,5 +1,32 @@
 from collections import defaultdict
-from itertools import combinations
+from itertools import combinations, groupby
+from timeit import default_timer as timer
+
+class Solution():
+    def __init__(self, sequence, students):
+        self.sequence = sequence
+        self.length = len(sequence)
+        self.counts = dict()
+        for s in students:
+            self.counts[s] = 0
+        for seq in sequence:
+            for elem in seq:
+                self.counts[elem] += 1
+        self.min_count = min(self.counts.values())
+        self.students = students
+
+    def pretty_print(self, verbose = False):
+        print("Number of students: {}".format(len(self.students)))
+        print("Number of valid groups in solution: {}".format(self.length))
+        print("Minimum number of groups an individual can participate in: {}".format(self.min_count))
+        print("-----------------------------------------------------------------")
+        if verbose:
+            print(self.sequence)
+            for n in self.counts:
+                print("Student {} participates in {} groups".format(n, self.counts[n]))
+            print("-----------------------------------------------------------------")
+
+
 
 def legal_permutation(permutation, already_paired):
     for elem in permutation:
@@ -61,29 +88,76 @@ def get_least_used(exclusion, used):
 def get_students(number, selections):
     students = range(1,number+1)
     permutations = generate_combinations(students, selections)
-    taken = defaultdict(list)
-    accepted_perm = list()
-    groups = dict()
-    for s in students:
-        groups[s] = 0
 
-    for perm in permutations:
-        #if not legal_permutation(perm, taken):
-        #    continue
-        #pair_combination(perm, taken)
-        accepted_perm.append(perm)
+    return [Solution(permutations, students)]
 
-        for elem in perm:
-            groups[elem] += 1
-    print("Number of students: {}".format(len(students)))
-    print("Number of valid groups: {}".format(len(accepted_perm)))
-    print("Minimum number of groups an individual can participate in: {}".format(min(groups.values())))
-    print("-----------------------------------------------------------------")
-    print(accepted_perm)
-    for n in groups:
-        print("{} - {}".format(n, groups[n]))
+def compare_sequence(seq1, seq2):
+    for a, b in zip(seq1, seq2):
+        for z,x in zip(a, b):
+            if z != x:
+                return False
+    return True
+
+def brute_force(number, selections):
+    students = range(1, number + 1)
+    comb = combinations(students, selections)
+    solutions = []
+    for c in comb:
+        solutions.extend(brute_recurse([c], [x for x in comb if x not in [c]], ))
+
+    solutions = sort_solutions(solutions)
+
+    max_len = 0
+    optimal_solutions = []
+    last_solution = []
+    for solution in solutions:
+        if len(solution) > max_len:
+            max_len = len(solution)
+            optimal_solutions = []
+            optimal_solutions.append(solution)
+            last_solution = solution
+        elif len(solution) == max_len and not compare_sequence(solution, last_solution):
+            optimal_solutions.append(solution)
+            last_solution = solution
+    solution_list = []
+    for solution in optimal_solutions:
+        solution_list.append(Solution(solution, students))
+    return solution_list
+
+def sort_solutions(solutions):
+    for solution in solutions:
+        for i, triple in enumerate(solution):
+            solution[i] = tuple(sorted(triple))
+        solution.sort(key=lambda x: x[0]*100 + x[1]*10 + x[2])
+
+    return sorted(list(x for x,_ in groupby(solutions)))
 
 
-for i in range(6,200,1):
-    get_students(i, 3)
+def brute_recurse(current, remaining):
+    recursed = 0
+    solutions = []
+    for elem in remaining:
+        if check_legal(elem, current):
+            solutions.extend(brute_recurse(current + [elem], [x for x in remaining if not x in [elem]]))
+            recursed = True
+    if not recursed:
+        return [current]
+    return solutions
+
+def check_legal(new, current):
+    for elem in current:
+        for subseq in combinations(new, 2):
+            if subseq[0] in elem and subseq[1] in elem:
+                return False
+    return True
+
+for i in range(6,10,1):
+    start = timer()
+    #get_students(i, 3)
+    solutions = brute_force(i, 3)
+    for solution in solutions:
+        solution.pretty_print(verbose = True)
+    print("{} optimal solutions found".format(len(solutions)))
+    end = timer()
+    print("Time taken for {} students: {}".format(i, end-start))
 
