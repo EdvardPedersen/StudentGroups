@@ -100,7 +100,7 @@ def compare_sequence(seq1, seq2):
 
 def brute_force(number, selections):
     students = range(1, number + 1)
-    comb = combinations(students, selections)
+    comb = list(combinations(students, selections))
     solutions = []
     for c in comb:
         solutions.extend(brute_recurse([c], [x for x in comb if x not in [c]], ))
@@ -146,18 +146,21 @@ def brute_recurse(current, remaining):
 
 def check_legal(new, current):
     for elem in current:
-        for subseq in combinations(new, 2):
-            if subseq[0] in elem and subseq[1] in elem:
+        if new[0] in elem:
+            if new[1] in elem or new[2] in elem:
                 return False
+        if new[1] in elem and new[2] in elem:
+            return False
     return True
 
-for i in range(6,10,1):
+for i in range(6,8,1):
     start = timer()
     #get_students(i, 3)
     solutions = brute_force(i, 3)
     for solution in solutions:
         solution.pretty_print(verbose = True)
-    print("{} optimal solutions found".format(len(solutions)))
+        pass
+    print("{} optimal solutions found of length {}".format(len(solutions), solutions[0].length))
     end = timer()
     print("Time taken for {} students: {}".format(i, end-start))
 
