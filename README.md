@@ -16,9 +16,18 @@ This means that for these values of N, a "perfect" solution exists.
 
 ## Lowest least used
 
+Gives a solution which attempts to equalize group participation
+
 - For each digit
 -- Take the least used element - if multiple are least used, take the lowest of the least used
 -- If this element is not legal to use in the current group, go to the next element
 - Add the group
 - Continue until no more legal groups can be created
 
+## Brute force
+
+Gives all optimal solutions
+
+- Generate every combination
+- For each starting group, try every other valid group
+- For each subsequent group, try every other valid group
