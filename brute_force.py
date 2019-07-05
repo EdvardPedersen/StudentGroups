@@ -46,12 +46,10 @@ def sort_solutions(solutions):
 def brute_recurse(current, remaining):
     recursed = 0
     solutions = []
-    for elem in remaining:
-        if check_legal(elem, current):
-            solutions.extend(brute_recurse(current + [elem], [x for x in remaining if not x in [elem]]))
-            recursed = True
-        else:
-            remaining.remove(elem)
+    legal_remaining = [x for x in remaining if check_legal(x, current)]
+    for elem in legal_remaining:
+        solutions.extend(brute_recurse(current + [elem], [x for x in legal_remaining if not x in [elem]]))
+        recursed = True
     if not recursed:
         return [current]
     return solutions
