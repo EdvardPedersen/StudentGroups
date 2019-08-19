@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import argparse
 
 class Button(tk.Button):
     def __init__(self, parent, num, max_num):
@@ -73,6 +74,9 @@ class App(tk.Frame):
                 b["bg"] = "green"
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("NUM", help="The number of students in the class", type = int)
+    args = parser.parse_args()
     root = tk.Tk()
-    run = App(master=root, num = 9)
+    run = App(master=root, num = args.NUM)
     run.mainloop()
