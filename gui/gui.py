@@ -14,7 +14,7 @@ class Button(tk.Button):
         self["bg"] = "green"
         self["command"] = self.toggle_select
         self.selected = False
-        grid_len = math.floor(math.sqrt(max_num))
+        grid_len = math.ceil(math.sqrt(max_num))
         self.grid(column=(num-1)%grid_len, row=(num-1)//grid_len)
 
     def toggle_select(self):
