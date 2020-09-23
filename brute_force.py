@@ -38,7 +38,7 @@ def sort_solutions(solutions):
     for solution in solutions:
         for i, triple in enumerate(solution):
             solution[i] = tuple(sorted(triple))
-        solution.sort(key=lambda x: x[0]*100 + x[1]*10 + x[2])
+        solution.sort(key=str)
 
     return sorted(list(x for x,_ in groupby(solutions)))
 
@@ -56,9 +56,9 @@ def brute_recurse(current, remaining):
 
 def check_legal(new, current):
     for elem in current:
-        if new[0] in elem:
-            if new[1] in elem or new[2] in elem:
-                return False
-        if new[1] in elem and new[2] in elem:
+        s = 0
+        for item in new:
+            s += elem.count(item)
+        if s > 1:
             return False
     return True
