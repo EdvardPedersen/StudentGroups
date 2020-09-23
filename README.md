@@ -31,3 +31,7 @@ Gives all optimal solutions
 - Generate every combination
 - For each starting group, try every other valid group
 - For each subsequent group, try every other valid group
+
+# Utilities
+
+`create_pairs_for_meetings.py` reads a file `participants.txt`, containing 1 name per line, and generates pairs until everyone has paired up with everyone else, in such a way that the maximum number of people can meet per week.
